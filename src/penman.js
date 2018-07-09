@@ -1,8 +1,8 @@
 /* global document */
 import { select } from 'd3-selection';
 import SmartLabelManager from 'fusioncharts-smartlabel';
-import { bBox, getLineHeight, createSVG } from './utils';
-import ContainerModel from './container-model';
+import { bBox, getTextMes, createSVG } from './utils';
+import Container from './container';
 import cmd from './commands';
 import cmdPreprocessor from './cmd-preprocess';
 
@@ -14,54 +14,49 @@ const prepareStyleForSmartLabel = config => ({
 });
 
 export default class Penman {
-    constructor () {
-        this.bbox = null;
+    constructor (mount, config) {
+        this._bbox = null;
         this._slm = new SmartLabelManager(+new Date(), document.body);
-        this._containerModel = new ContainerModel();
-        this._cmdr = cmd(this._containerModel);
-        this._cmdpp = cmdPreprocessor(this._containerModel);
+        this._container = new Container();
+        this._cmdr = cmd(this._container);
+        this._cmdpp = cmdPreprocessor(this._container);
 
-        this._config = null;
-        this._mount = null;
+        this._config = this.__config(config);
+        [this._mount, this._bbox] = this.__mount(mount);
 
-        this.__configure(this.constructor.defaultConfig());
+        this.__configure(this._config);
     }
 
     static defaultConfig () {
         return {
-            fontSize: 14,
-            padding: [8, 10]
+            fontSize: 12,
+            padding: [8, 10],
+            charDrawingTime: 32
         };
     }
 
     __configure (config) {
+        const textMes = getTextMes(this._slm);
         this._slm.setStyle(prepareStyleForSmartLabel(config));
-        this._containerModel.lineHeight(getLineHeight(this._slm));
-        this._containerModel.padding(config.padding);
+        this._container.padding(config.padding);
+        this._container.lineHeight(textMes.height);
+        this._container.charWidth(textMes.width);
+        this._mount.style('font-size', `${config.fontSize}px`);
+        this._container.__configure();
+
         return this;
     }
 
-    config (...params) {
-        if (params.length) {
-            const defConf = this.constructor.defaultConfig();
-            this._config = Object.assign(Object.assign({}, defConf), params[0]);
-
-            this.__configure(this._config);
-            return this;
-        }
-
-        return this._config;
+    __config (config) {
+        const defConf = this.constructor.defaultConfig();
+        return Object.assign(Object.assign({}, defConf), (config || {}));
     }
 
-    mount (...params) {
-        if (params.length) {
-            this._mount = select(params[0]);
-            this.bbox = bBox(this._mount);
-            this._containerModel.mount(createSVG(this._mount, this.bbox));
-            return this;
-        }
-
-        return this._mount;
+    __mount (mount) {
+        mount = select(mount);
+        let bbox = bBox(mount);
+        this._container.mount(createSVG(mount, bbox));
+        return [mount, bbox];
     }
 
     command (cmdName, param) {

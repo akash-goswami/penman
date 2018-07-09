@@ -14,12 +14,11 @@
     <script src="./penman.js"></script>
     <script type="text/javascript">
       const Penman = penman.Penman;
-      let p = new Penman();
-      p.config({
-        fontSize: 14,
+      let p = new Penman('#root', {
+        fontSize: 12,
         padding: [20, 20],
-      })
-      p.mount('#root');
+        charDrawingTime: 10
+      });
       p.command('WRITELINE',
         `
         This is first line

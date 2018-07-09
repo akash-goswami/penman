@@ -1,4 +1,4 @@
-import LineModel from './line-model';
+import Line from './line';
 import enums from './cmd-enum';
 
 export default function cmdPreprocess (context) {
@@ -31,7 +31,7 @@ export default function cmdPreprocess (context) {
         }
 
         lines = lines.slice(si + 1, ei);
-        lines = lines.map(_ => new LineModel(_));
+        lines = lines.map(_ => new Line(_));
         context.operate(lines.map(l => [null, l]));
 
         return lines;

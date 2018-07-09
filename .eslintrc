@@ -24,6 +24,7 @@
     "no-param-reassign": "off",
     "no-iterator" : "off",
     "no-nested-ternary": "off",
+    "no-return-assign": "off",
     "no-restricted-syntax": [
        "error",
        "LabeledStatement",
