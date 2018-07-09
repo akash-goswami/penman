@@ -2,6 +2,8 @@ export default class ContainerModel {
     constructor () {
         this.lines = [];
         this._mount = null;
+        this._padding = [];
+        this._lineHeight = null;
     }
 
     mount (sel) {
@@ -9,11 +11,32 @@ export default class ContainerModel {
         return this;
     }
 
+    padding (padding) {
+        this._padding = padding;
+        return this;
+    }
+
+    lineHeight (lh) {
+        this._lineHeight = lh;
+        return this;
+    }
+
     size () {
         return this.lines.length;
     }
 
-    operate (index, line) {
+    operate (lines) {
+        lines.forEach(l => this.__operateAtomic(l[0], l[1]));
+        this.__updateContainerDimension();
+        return this;
+    }
+
+    __updateContainerDimension () {
+        this._mount.style('height', `${this._lineHeight * this.size() + 2 * this._padding[1]}`);
+        return this;
+    }
+
+    __operateAtomic (index, line) {
         if (index === null) {
             this.lines.push(line);
         }

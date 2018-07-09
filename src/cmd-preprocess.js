@@ -31,12 +31,10 @@ export default function cmdPreprocess (context) {
         }
 
         lines = lines.slice(si + 1, ei);
-        let l;
-        return lines.map((_) => {
-            l = new LineModel(_);
-            context.operate(null, l);
-            return l;
-        });
+        lines = lines.map(_ => new LineModel(_));
+        context.operate(lines.map(l => [null, l]));
+
+        return lines;
     };
 
     return cmd;
