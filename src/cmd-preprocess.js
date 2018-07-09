@@ -1,8 +1,9 @@
 import LineModel from './line-model';
+import enums from './cmd-enum';
 
 export default function cmdPreprocess (context) {
     const cmd = {};
-    cmd.WRITE = (arg) => {
+    cmd[enums.WRITELINE] = (arg) => {
         let lines = arg.split('\n');
 
         let line;
@@ -30,7 +31,12 @@ export default function cmdPreprocess (context) {
         }
 
         lines = lines.slice(si + 1, ei);
-        lines.forEach(_ => context.operate(null, new LineModel(_)));
+        let l;
+        return lines.map((_) => {
+            l = new LineModel(_);
+            context.operate(null, l);
+            return l;
+        });
     };
 
     return cmd;

@@ -9,12 +9,17 @@
 
   </head>
   <body>
-    <div id="root" style="width: 600px; height: 400px; background: lightblue"></div>
+    <div id="root" style="width: 600px; background: lightblue"></div>
 
     <script src="./penman.js"></script>
     <script type="text/javascript">
       const Penman = penman.Penman;
       let p = new Penman();
+      p.config({
+        fontSize: 14,
+        padding: [20, 20],
+        with: 'lineno' /* lineno | prompt */
+      })
       p.mount('#root');
       p.command('WRITE',
         `

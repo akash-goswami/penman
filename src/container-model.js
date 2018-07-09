@@ -1,6 +1,12 @@
 export default class ContainerModel {
     constructor () {
         this.lines = [];
+        this._mount = null;
+    }
+
+    mount (sel) {
+        this._mount = sel;
+        return this;
     }
 
     size () {

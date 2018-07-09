@@ -11,13 +11,32 @@ export default class Penman {
         this._cmdr = cmd(this._containerModel);
         this._cmdpp = cmdPreprocessor(this._containerModel);
 
+        this._config = null;
         this._mount = null;
+    }
+
+    static defaultConfig () {
+        return {
+            fontSize: 14,
+            padding: [20, 20]
+        };
+    }
+
+    config (...params) {
+        if (params.length) {
+            const defConf = this.constructor.defaultConfig();
+            this._config = Object.assign(Object.assign({}, defConf), params[0]);
+            return this;
+        }
+
+        return this._config;
     }
 
     mount (...params) {
         if (params.length) {
             this._mount = select(params[0]);
             this.bbox = bBox(this._mount);
+            this._containerModel.mount(this._mount);
             return this;
         }
 
