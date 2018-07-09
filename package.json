@@ -45,9 +45,14 @@
     "scripts": {
         "test": "npm run lint && npm run flow && karma start karma.conf.js ",
         "build": "webpack",
+        "utd": "karma start karma.conf.js --browsers=Chrome --single-run=false --debug --auto-watch",
+        "ut": "karma start karma.conf.js",
         "start": "webpack-dev-server",
         "lint": "eslint ./src",
         "docs": "jsdoc -c ./jsdoc.conf.json",
         "flow": "flow"
+    },
+    "dependencies": {
+        "d3-selection": "^1.3.0"
     }
 }

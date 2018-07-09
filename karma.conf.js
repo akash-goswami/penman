@@ -6,6 +6,7 @@ module.exports = function (config) {
             'test.webpack.js',
         ],
         webpack: {
+            devtool: 'inline-source-map',
             module: {
                 rules: [
                     // instrument only testing sources with Istanbul
@@ -40,26 +41,6 @@ module.exports = function (config) {
 
         coverageIstanbulReporter: {
             dir: 'coverage/',
-            thresholds: {
-                emitWarning: false,
-                global: {
-                    statements: 80,
-                    lines: 80,
-                    branches: 80,
-                    functions: 80
-                },
-                each: {
-                    statements: 80,
-                    lines: 80,
-                    branches: 80,
-                    functions: 80,
-                    overrides: {
-                        'baz/component/**/*.js': {
-                            statements: 80
-                        }
-                    }
-                }
-            },
             reports: ['text-summary', 'html', 'lcov'],
             fixWebpackSourcePaths: true,
             reporters: [

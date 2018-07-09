@@ -9,12 +9,21 @@
 
   </head>
   <body>
-    <h1</h1>
+    <div id="root" style="width: 600px; height: 400px; background: lightblue"></div>
 
     <script src="./penman.js"></script>
     <script type="text/javascript">
-      const sum = penman.default;
-      document.write(`sum is ${sum(10, 12)}`);
+      const Penman = penman.Penman;
+      let p = new Penman();
+      p.mount('#root');
+      p.command('WRITE',
+        `
+        This is first line
+        This is second line
+
+        This is third line
+        `
+      );
     </script>
   </body>
 </html>
