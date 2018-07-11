@@ -17,10 +17,11 @@ export const bBox = (mountPoint) => {
 
 
 export const getTextMes = (sl) => {
-    const st = sl.useEllipsesOnOverflow(false).getSmartText('W');
+    const text = 'ABCD EFGH IJKLMNO pqrst UVWXYZ 123456 789';
+    const st = sl.useEllipsesOnOverflow(false).getSmartText(text);
     return {
         height: st.height,
-        width: st.width
+        width: +(st.width / text.length).toFixed(1)
     };
 };
 

@@ -7,7 +7,7 @@ import cmd from './commands';
 import cmdPreprocessor from './cmd-preprocess';
 
 const prepareStyleForSmartLabel = config => ({
-    fontSize: config.fontSize,
+    fontSize: `${config.fontSize}px`,
     fontFamily: 'monospace',
     fontWeight: 'normal',
     fontStyle: 'normal'
@@ -36,8 +36,8 @@ export default class Penman {
     }
 
     __configure (config) {
-        const textMes = getTextMes(this._slm);
         this._slm.setStyle(prepareStyleForSmartLabel(config));
+        const textMes = getTextMes(this._slm);
         this._container.padding(config.padding);
         this._container.lineHeight(textMes.height);
         this._container.charWidth(textMes.width);

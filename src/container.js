@@ -1,3 +1,5 @@
+import { transition } from 'd3-transition';
+import { easeLinear } from 'd3-ease';
 import { flat } from './utils';
 
 export default class Container {
@@ -7,10 +9,16 @@ export default class Container {
         this._padding = [];
         this._lineHeight = null;
         this._charWidth = null;
+        this._transition = {
+            word: transition().duration(16).ease(easeLinear),
+            space: transition().duration(16).ease(easeLinear)
+
+        };
     }
 
     mount (sel) {
         this._mount = sel;
+        this._defs = sel.append('defs');
         this._g = sel.append('g').classed('pm-con', true);
         return this;
     }
@@ -45,10 +53,58 @@ export default class Container {
         return this;
     }
 
+    __drawCharWise (clip, i, cumulativeDistance) {
+        let id;
+        return new Promise((res) => {
+            id = setTimeout(() => {
+                clip.attr('width', cumulativeDistance);
+                clearTimeout(id);
+                res();
+            }, 75);
+        });
+    }
+
+    async writeLine (lineNo) {
+        const clip = this._defs.select(`#pm-m-${lineNo}`).select('rect');
+        const line = this.lines[lineNo];
+        const chunk = line.chunks[0];
+
+        const arr = chunk.text;
+        let cumulativeDistance = this._padding[0];
+        for (let i = 0, l = arr.length; i < l; i++) {
+            cumulativeDistance += this._charWidth;
+            await this.__drawCharWise(clip, i, cumulativeDistance);
+        }
+    }
+
     __draw () {
         let chunks;
 
-        const sel = this._g
+        // Define the clips
+        let sel = this._defs
+            .selectAll('clipPath')
+            .data(chunks = flat(this.lines.map(l => l.chunks)));
+
+        sel.exit().remove();
+
+        sel
+                        .enter()
+                        .append('clipPath')
+                        .attr('transform', `translate(-${this._padding[0]},-${this._padding[1] + this._lineHeight})`)
+                        .merge(sel)
+                        .attr('id', d => `pm-m-${d.lineNo}`)
+                        .append('rect')
+                        .attr('x', (d, i) => {
+                            if (i && chunks[i - 1].lineNo === chunks[i].lineNo) {
+                                return chunks[i - 1].size() * this._charWidth;
+                            }
+                            return 0;
+                        })
+                        .attr('y', d => d.lineNo * this._lineHeight + this._padding[1])
+                        .attr('width', 0)
+                        .attr('height', this._lineHeight);
+
+        sel = this._g
             .selectAll('text')
             .data(chunks = flat(this.lines.map(l => l.chunks)));
 
@@ -65,6 +121,7 @@ export default class Container {
                             return 0;
                         })
                         .attr('y', d => d.lineNo * this._lineHeight)
+                        .attr('clip-path', d => `url(#pm-m-${d.lineNo})`)
                         .text(d => d.text);
     }
 
